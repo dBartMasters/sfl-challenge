@@ -44,3 +44,30 @@ for track in midi.tracks:
     for msg in track:
         # print(track)
         print(msg)            
+
+# Plot ROC curves for each class
+plt.figure(figsize=(14, 10))
+for i in range(num_classes):
+    fpr, tpr, thresholds = roc_curve(y_test == i, y_proba_lr[:, i])
+    roc_auc = auc(fpr, tpr)
+    plt.plot(fpr, tpr, label=f'Class {class_labels[i]} (AUC = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], 'k--', lw=2)  # Diagonal line for random guess
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic (ROC) Curves')
+plt.legend(loc='best')
+plt.show()
+
+# Plot precision-recall curves for each class
+plt.figure(figsize=(14, 10))
+for i in range(num_classes):
+    precision, recall, thresholds = precision_recall_curve(y_test == i, y_proba_lr[:, i])
+    plt.plot(thresholds, precision[:-1], label=f'Class {class_labels[i]} Precision')
+    plt.plot(thresholds, recall[:-1], label=f'Class {class_labels[i]} Recall')
+    plt.xlabel('Threshold')
+    plt.ylabel('Precision/Recall')
+    plt.title(f'Precision-Recall Curve for Class {class_labels[i]}')
+    plt.legend(loc='best')
+    plt.show()
