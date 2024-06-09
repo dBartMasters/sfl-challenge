@@ -4,7 +4,21 @@ Code for the SFL take home challenge and assignment
 **Author**: D. Bart Masters (d.bart.masters@gmail.com)
 **Time requested**: Saturday, June 8th, 2024 12:00 pm CST
 **Time due**: Tuesday, June 11th, 2024 12:00 pm CST
+**Audience**: Deloitte-SFL Scientific
 
+File link (private): [DS Manager Technical Assessment](https://docs.google.com/document/d/19pabLtQrG_KxkHHuwTKD1GqM3qnnoynt/edit) 
+
+--- 
+# Resources Used
+## mido package used: 
+https://mido.readthedocs.io/en/stable/ 
+## music21 ideas: 
+https://www.kaggle.com/code/wfaria/midi-music-data-extraction-using-music21/notebook
+https://sean-hobin.medium.com/predicting-musical-genre-from-midi-files-e6c274cd9e6 
+## cited paper: 
+https://arxiv.org/pdf/1611.09827
+
+--- 
 
 # Assignment from Google Doc
 ## Scenario
