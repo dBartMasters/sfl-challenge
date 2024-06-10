@@ -4,7 +4,10 @@
 4.5 hours
 
 6/9/24
-1:30-
+1:30-4:37 pm
+10:00pm - 
+
+3hr7min
 
 # notes for project
 music21?
