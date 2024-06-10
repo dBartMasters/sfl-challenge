@@ -22,11 +22,13 @@ def extract_features_from_midi(file_path, second_interval=30):
 
     # initialize values
     note_counts = [0] * 128  # MIDI notes range from 0 to 127
-    total_velocity = 0
+    # total_velocity = 0
+    velocities = []
     note_on_count = 0
     elapsed_time = 0
     key = '' # each file should have only 1 key. Investigate if this assumption is correct.
     tpb = midi.ticks_per_beat
+    type = midi.type
 
     # get ticks
     for msg in midi:
@@ -39,22 +41,25 @@ def extract_features_from_midi(file_path, second_interval=30):
         if elapsed_time<=second_interval:
             if msg.type == 'note_on' and msg.velocity > 0:
                 note_counts[msg.note] += 1
-                total_velocity += msg.velocity
+                # total_velocity += msg.velocity
+                velocities.append(msg.velocity)
                 note_on_count += 1
         else:
             break
             
-    # Calculate average velocity
-    if note_on_count > 0:
-        average_velocity = total_velocity / note_on_count
+    # Calculate velocity statistics
+    if velocities:
+        average_velocity = np.mean(velocities)
+        variance_velocity = np.var(velocities)
     else:
         average_velocity = 0
+        variance_velocity = 0
     
     # Normalize the note counts to be between 0 and 1
     normalized_note_counts = (note_counts - np.min(note_counts)) / (np.max(note_counts) - np.min(note_counts))
     
     # combine into 1 list
-    combined_features = [tpb, key, average_velocity] + list(normalized_note_counts)
+    combined_features = [type, tpb, key, average_velocity, variance_velocity] + list(normalized_note_counts)
 
     return combined_features
 
@@ -82,12 +87,13 @@ def load_dataset(directory, labeled=True):
 # create a pandas dataframe from lists
 def create_dataframe(features, labels=[]):
     # Convert to pandas DataFrame
-    feature_columns = ['tpb', 'key', 'average_velocity']+[f'Note_{i}' for i in range(128)]
+    feature_columns = ['type', 'tpb', 'key', 'average_velocity', 'variance_velocity']+[f'Note_{i}' for i in range(128)]
     df = pd.DataFrame(features, columns=feature_columns)
     if len(labels)>0:
         df['composer'] = labels
     return df
 
+# model evaluation stats and visualizations
 def model_eval(classifier_name, y_test, y_pred, y_proba, label_encoder):
     print(classifier_name,':')
     print("Accuracy Score:", accuracy_score(y_test, y_pred))
@@ -126,6 +132,6 @@ def model_eval(classifier_name, y_test, y_pred, y_proba, label_encoder):
     plt.ylim([0.0, 1.05])
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title('Receiver Operating Characteristic (ROC) Curves')
+    plt.title(classifier_name+'ROC Curves')
     plt.legend(loc='best')
     plt.show()
