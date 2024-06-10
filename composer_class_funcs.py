@@ -6,6 +6,11 @@ import numpy as np
 import pandas as pd
 # midi files
 import mido
+# sklearn 
+from sklearn.metrics import accuracy_score, classification_report, precision_recall_curve, roc_curve, auc
+# viz
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # extract features from midi file using mido library
 def extract_features_from_midi(file_path, second_interval=30):
@@ -82,3 +87,45 @@ def create_dataframe(features, labels=[]):
     if len(labels)>0:
         df['composer'] = labels
     return df
+
+def model_eval(classifier_name, y_test, y_pred, y_proba, label_encoder):
+    print(classifier_name,':')
+    print("Accuracy Score:", accuracy_score(y_test, y_pred))
+    print("\nClassification Report:")
+    print(classification_report(y_test, y_pred,))
+
+    # Print the classification probabilities along with the predicted class
+    # for i, probs in enumerate(y_proba):
+    #     print(f"Sample {i}:")
+    #     for j, class_prob in enumerate(probs):
+    #         print(f"  Class {label_encoder.classes_[j]}: {class_prob:.4f}")
+    #     print(f"  Predicted Class: {label_encoder.inverse_transform([y_pred_lr[i]])[0]}\n")
+
+    # Visualize the classification probabilities for each class
+    class_labels = label_encoder.classes_
+    num_classes = len(class_labels)
+
+    plt.figure(figsize=(14, 10))
+    for i in range(num_classes):
+        plt.subplot(num_classes, 1, i+1)
+        sns.histplot(y_proba[:, i], kde=True, bins=20)
+        plt.title(f'Class {class_labels[i]}: Probability Distribution')
+        plt.xlabel('Predicted Probability')
+        plt.ylabel('Frequency')
+    plt.tight_layout()
+    plt.show()
+
+    # Plot ROC curves for each class
+    plt.figure(figsize=(14, 10))
+    for i in range(num_classes):
+        fpr, tpr, thresholds = roc_curve(y_test == i, y_proba[:, i])
+        roc_auc = auc(fpr, tpr)
+        plt.plot(fpr, tpr, label=f'Class {class_labels[i]} (AUC = {roc_auc:.2f})')
+    plt.plot([0, 1], [0, 1], 'k--', lw=2)  # Diagonal line for random guess
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver Operating Characteristic (ROC) Curves')
+    plt.legend(loc='best')
+    plt.show()
