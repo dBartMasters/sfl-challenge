@@ -7,7 +7,7 @@ import pandas as pd
 # midi files
 import mido
 # sklearn 
-from sklearn.metrics import accuracy_score, classification_report, precision_recall_curve, roc_curve, auc
+from sklearn.metrics import accuracy_score, classification_report, precision_recall_curve, roc_curve, auc, roc_auc_score
 # viz
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -96,37 +96,40 @@ def create_dataframe(features, labels=[]):
     return df
 
 # model evaluation stats and visualizations
-def model_eval(classifier_name, y_test, y_pred, y_proba, label_encoder):
+def model_eval(classifier_name, y_train, y_pred_train, y_proba_train, y_test, y_pred_test, y_proba_test,  label_encoder):
     print(classifier_name,':')
-    print("Accuracy Score:", accuracy_score(y_test, y_pred))
-    print("\nClassification Report:")
-    print(classification_report(y_test, y_pred,))
 
-    # Print the classification probabilities along with the predicted class
-    # for i, probs in enumerate(y_proba):
-    #     print(f"Sample {i}:")
-    #     for j, class_prob in enumerate(probs):
-    #         print(f"  Class {label_encoder.classes_[j]}: {class_prob:.4f}")
-    #     print(f"  Predicted Class: {label_encoder.inverse_transform([y_pred_lr[i]])[0]}\n")
+    # Calculate AUC for the training set
+    auc_train_lr = roc_auc_score(y_train, y_proba_train, multi_class='ovr', average='macro')
+    # Calculate AUC for the test set
+    auc_test_lr = roc_auc_score(y_test, y_proba_test, multi_class='ovr', average='macro')
+
+    print(f"AUC for Training Set: {auc_train_lr:.4f}")
+    print(f"AUC for Test Set: {auc_test_lr:.4f}")
+
+
+    print("Accuracy Score (Test):", accuracy_score(y_test, y_pred_test))
+    print("\nClassification Report (Test):")
+    print(classification_report(y_test, y_pred_test,))  
 
     # Visualize the classification probabilities for each class
     class_labels = label_encoder.classes_
     num_classes = len(class_labels)
 
-    plt.figure(figsize=(14, 10))
+    plt.figure(figsize=(12, 8))
     for i in range(num_classes):
         plt.subplot(num_classes, 1, i+1)
-        sns.histplot(y_proba[:, i], kde=True, bins=20)
-        plt.title(f'Class {class_labels[i]}: Probability Distribution')
+        sns.histplot(y_proba_test[:, i], kde=True, bins=20)
+        plt.title(f'Class {class_labels[i]}: Probability Distribution (Test)')
         plt.xlabel('Predicted Probability')
         plt.ylabel('Frequency')
     plt.tight_layout()
     plt.show()
 
     # Plot ROC curves for each class
-    plt.figure(figsize=(14, 10))
+    plt.figure(figsize=(7, 5))
     for i in range(num_classes):
-        fpr, tpr, thresholds = roc_curve(y_test == i, y_proba[:, i])
+        fpr, tpr, thresholds = roc_curve(y_test == i, y_proba_test[:, i])
         roc_auc = auc(fpr, tpr)
         plt.plot(fpr, tpr, label=f'Class {class_labels[i]} (AUC = {roc_auc:.2f})')
     plt.plot([0, 1], [0, 1], 'k--', lw=2)  # Diagonal line for random guess
@@ -134,6 +137,6 @@ def model_eval(classifier_name, y_test, y_pred, y_proba, label_encoder):
     plt.ylim([0.0, 1.05])
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title(classifier_name+' ROC Curves')
+    plt.title(classifier_name+' ROC Curves (Test)')
     plt.legend(loc='best')
     plt.show()
