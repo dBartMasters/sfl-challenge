@@ -1,4 +1,4 @@
-# Functions to support classifier notebook
+# Functions to support classifier notebook explore_nb_mido.ipynb
 
 ## Libraries
 import os
@@ -38,7 +38,7 @@ def extract_features_from_midi(file_path, second_interval=[1,30]):
         if msg.is_meta and msg.type == 'key_signature':
             key = msg.key
         
-        # just the first n seconds
+        # extract messages for the time window specified
         elapsed_time += msg.time
         if (elapsed_time>=second_interval[0] and elapsed_time<=second_interval[1]):
             if msg.type == 'note_on' and msg.velocity > 0:
@@ -79,7 +79,7 @@ def load_dataset(directory, labeled=True, segments=2):
                 for file_name in os.listdir(composer_path):
                     if file_name.endswith('.mid'):
                         file_path = os.path.join(composer_path, file_name)
-                        for i in range(1,segments+1):
+                        for i in range(1,segments+1): # this segments out the files to get more records by the time specified
                             features.append(extract_features_from_midi(file_path, second_interval=[(i-1)*30+1,i*30]))
                             labels.append(composer_dir)
         return features, labels
@@ -111,7 +111,7 @@ def model_eval(classifier_name, y_train, y_pred_train, y_proba_train, y_test, y_
     print(f"AUC for Training Set: {auc_train_lr:.4f}")
     print(f"AUC for Test Set: {auc_test_lr:.4f}")
 
-
+    # Calcuate an accuracy score
     print("Accuracy Score (Test):", accuracy_score(y_test, y_pred_test))
     print("\nClassification Report (Test):")
     print(classification_report(y_test, y_pred_test,))  
