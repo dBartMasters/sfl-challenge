@@ -63,6 +63,11 @@ def extract_features_from_midi(file_path, second_interval=[1,30]):
 
     return combined_features
 
+# sample implementation for testing
+# file_path_ps2 = test_midi_path+"0.981087291054314_adj.mid"
+# file_path_ps1 = train_midi_path+"Bach/Cello Suite 3_BWV1009_2217_cs3-1pre.mid"
+# x = extract_features_from_midi(file_path_ps1, second_interval=[210,240])
+
 # create dataset from all midi files in a directory
 def load_dataset(directory, labeled=True, segments=2):
     features = []
