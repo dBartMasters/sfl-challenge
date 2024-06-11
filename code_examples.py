@@ -1,5 +1,9 @@
 # extra code snippets for later
 
+
+# print(os.listdir(train_midi_path))
+# print(os.listdir(test_midi_path))
+
 # example file
 train_midi_path+"Bach/Cello Suite 3_BWV1009_2217_cs3-1pre.mid"
 
@@ -201,3 +205,11 @@ for msg in midi:
 
 print(note_counts)
 print(elapsed_time)
+
+
+  # Print the classification probabilities along with the predicted class
+    # for i, probs in enumerate(y_proba):
+    #     print(f"Sample {i}:")
+    #     for j, class_prob in enumerate(probs):
+    #         print(f"  Class {label_encoder.classes_[j]}: {class_prob:.4f}")
+    #     print(f"  Predicted Class: {label_encoder.inverse_transform([y_pred_lr[i]])[0]}\n")

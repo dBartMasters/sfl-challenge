@@ -8,15 +8,37 @@ Code for the SFL take home challenge and assignment
 
 File link (private): [DS Manager Technical Assessment](https://docs.google.com/document/d/19pabLtQrG_KxkHHuwTKD1GqM3qnnoynt/edit) 
 
+---
+# Author Notes
+This notebook represents what I would consider at a "proof of concept" stage. Can machine learning methods provide a solution to the presented problem? I believe the methods here suggest the answer is "yes".
+
+The solutions here would provide a starting point for iteration, improvement, and application tuning.
+The major next steps would likely include:
+- Improved data process and feature engineering: there are several features that are unexplored that would likely increase effectiveness of these methods.
+- Tuning of thresholds: for all classifiers, if we could understand associated costs of errors (type I and type II) we could better optimize how the classifier(s) behave
+- Operationlize the app: Provide an easier way to specify training data, methods, and data to be evaluated that could eventually be deployed by an end user.
+    - Options containerized app deployed in the cloud that allows for input of parameters and files to be evaluated.
+## Next steps
+- Explore more data: the current method uses 4, 30 second segments from each trial in the labeled dataset. This could be extended to leverage all the data beyond 2 minutes of each file.
+- Add features
+    - Incorporate data from time signatures in the meta messages of the *.midi files
+    - Explore more frequency domain features
+    - Creation of manual cross-variables
+- Explore other libraries. Primarily, the `music21` python library. I believe this library would allow for easier, and more robust feature engineering.
+- Further tune classifiers to reduce overfitting
+- Develop a more scientific method of determing the final threshold to determine if an unlabeled file belongs to one of our know composers. A better understanding the costs of errors would aid in this effort.
+- Explore cross-validation methods with our initial classifiers to better leverage our small training dataset improve model generalization
 --- 
 # Resources Used
 ## mido package used: 
 https://mido.readthedocs.io/en/stable/ 
+
+## cited paper: 
+https://arxiv.org/pdf/1611.09827
+
 ## music21 ideas: 
 https://www.kaggle.com/code/wfaria/midi-music-data-extraction-using-music21/notebook
 https://sean-hobin.medium.com/predicting-musical-genre-from-midi-files-e6c274cd9e6 
-## cited paper: 
-https://arxiv.org/pdf/1611.09827
 
 --- 
 
