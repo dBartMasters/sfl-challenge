@@ -46,8 +46,6 @@ def extract_features_from_midi(file_path, second_interval=[1,30]):
                 # total_velocity += msg.velocity
                 velocities.append(msg.velocity)
                 note_on_count += 1
-        # else:
-        #     break
             
     # Calculate velocity statistics
     if velocities:
@@ -66,7 +64,7 @@ def extract_features_from_midi(file_path, second_interval=[1,30]):
     return combined_features
 
 # create dataset from all midi files in a directory
-def load_dataset(directory, labeled=True):
+def load_dataset(directory, labeled=True, segments=2):
     features = []
     labels = []
     if labeled:
@@ -76,8 +74,9 @@ def load_dataset(directory, labeled=True):
                 for file_name in os.listdir(composer_path):
                     if file_name.endswith('.mid'):
                         file_path = os.path.join(composer_path, file_name)
-                        features.append(extract_features_from_midi(file_path))
-                        labels.append(composer_dir)
+                        for i in range(1,segments+1):
+                            features.append(extract_features_from_midi(file_path, second_interval=[(i-1)*30+1,i*30]))
+                            labels.append(composer_dir)
         return features, labels
     else:
         for file_name in os.listdir(directory):
