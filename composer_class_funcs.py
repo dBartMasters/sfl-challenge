@@ -29,6 +29,8 @@ def extract_features_from_midi(file_path, second_interval=30):
     key = '' # each file should have only 1 key. Investigate if this assumption is correct.
     tpb = midi.ticks_per_beat
     type = midi.type
+    filename = os.path.basename(midi.filename)
+
 
     # get ticks
     for msg in midi:
@@ -59,7 +61,7 @@ def extract_features_from_midi(file_path, second_interval=30):
     normalized_note_counts = (note_counts - np.min(note_counts)) / (np.max(note_counts) - np.min(note_counts))
     
     # combine into 1 list
-    combined_features = [type, tpb, key, average_velocity, variance_velocity] + list(normalized_note_counts)
+    combined_features = [filename, type, tpb, key, average_velocity, variance_velocity] + list(normalized_note_counts)
 
     return combined_features
 
@@ -87,7 +89,7 @@ def load_dataset(directory, labeled=True):
 # create a pandas dataframe from lists
 def create_dataframe(features, labels=[]):
     # Convert to pandas DataFrame
-    feature_columns = ['type', 'tpb', 'key', 'average_velocity', 'variance_velocity']+[f'Note_{i}' for i in range(128)]
+    feature_columns = ['filename','type', 'tpb', 'key', 'average_velocity', 'variance_velocity']+[f'Note_{i}' for i in range(128)]
     df = pd.DataFrame(features, columns=feature_columns)
     if len(labels)>0:
         df['composer'] = labels
@@ -132,6 +134,6 @@ def model_eval(classifier_name, y_test, y_pred, y_proba, label_encoder):
     plt.ylim([0.0, 1.05])
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
-    plt.title(classifier_name+'ROC Curves')
+    plt.title(classifier_name+' ROC Curves')
     plt.legend(loc='best')
     plt.show()
