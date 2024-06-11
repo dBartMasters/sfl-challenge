@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # extract features from midi file using mido library
-def extract_features_from_midi(file_path, second_interval=30):
+def extract_features_from_midi(file_path, second_interval=[1,30]):
     ## Input: file path of midi file
     ## Output: list [ticks per beat, key, average_velocity, note counts for 128 notes]
 
@@ -40,14 +40,14 @@ def extract_features_from_midi(file_path, second_interval=30):
         
         # just the first n seconds
         elapsed_time += msg.time
-        if elapsed_time<=second_interval:
+        if (elapsed_time>=second_interval[0] and elapsed_time<=second_interval[1]):
             if msg.type == 'note_on' and msg.velocity > 0:
                 note_counts[msg.note] += 1
                 # total_velocity += msg.velocity
                 velocities.append(msg.velocity)
                 note_on_count += 1
-        else:
-            break
+        # else:
+        #     break
             
     # Calculate velocity statistics
     if velocities:
