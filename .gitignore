@@ -166,5 +166,6 @@ Challenge_DataSet/
 
 # data
 *.csv
+*.zip
 
 notes_for_project.md
