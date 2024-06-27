@@ -144,3 +144,36 @@ def model_eval(classifier_name, y_train, y_pred_train, y_proba_train, y_test, y_
     plt.title(classifier_name+' ROC Curves (Test)')
     plt.legend(loc='best')
     plt.show()
+
+# print out top features
+def top_feat(classifier, classifier_name, x_train, n=5):
+    # Get feature importances
+    importances = classifier.feature_importances_
+
+    # Get feature names
+    feature_names = x_train.columns
+
+    # Number of top features to display
+    n_top_features = 10
+
+    # Sort feature importances in descending order and get the top n features
+    indices = np.argsort(importances)[::-1][:n_top_features]
+    top_feature_names = feature_names[indices]
+    top_importances = importances[indices]
+
+    # Print top n feature importances with names
+    print(f"Top {n_top_features} feature importances:")
+    for feature_name, importance in zip(top_feature_names, top_importances):
+        print(f"{feature_name}: {importance}")
+
+
+    # Plot the top n feature importances
+    plt.figure(figsize=(10, 6))
+    plt.title(f"Top {n_top_features} Feature Importances: {classifier_name}")
+    plt.bar(range(n_top_features), top_importances, align="center")
+    plt.xticks(range(n_top_features), top_feature_names, rotation=90)
+    plt.xlabel("Feature")
+    plt.ylabel("Importance")
+    plt.show()
+
+    return top_importances
